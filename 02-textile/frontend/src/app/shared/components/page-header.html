@@ -1,0 +1,13 @@
+<header class="flex flex-wrap items-end justify-between gap-4">
+  <div>
+    @if (eyebrow()) {
+      <p class="flex items-center gap-2 text-sm font-bold text-blue-700">
+        @if (icon()) { <i [class]="icon()" aria-hidden="true"></i> }
+        {{ eyebrow() }}
+      </p>
+    }
+    <h1 class="page-title">{{ title() }}</h1>
+    @if (description()) { <p class="mt-2 text-slate-500">{{ description() }}</p> }
+  </div>
+  <ng-content />
+</header>
