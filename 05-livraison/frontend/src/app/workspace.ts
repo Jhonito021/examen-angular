@@ -10,7 +10,7 @@ import { AuthService } from './auth';
 @Component({
   selector: 'app-workspace',
   imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './workspace.html'
+  templateUrl: './workspace.html',
 })
 export class WorkspacePage implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
@@ -105,24 +105,27 @@ export class WorkspacePage implements OnInit, OnDestroy {
   }
 
   private loadRelations(fields: FormField[]): void {
-    const relation = fields.find(field => field.relation)?.relation;
+    const relation = fields.find((field) => field.relation)?.relation;
     if (!relation) {
       this.relatedRecords.set([]);
       return;
     }
     const endpoint = relation === 'clients' ? '/api/clients' : '/api/orders';
     this.api.list<ApiRecord>(endpoint, '', '', 0, 100).subscribe({
-      next: result => {
-        const eligible = this.moduleKey() === 'parcels'
-          ? result.content.filter(row => row['status'] === 'CREEE')
-          : this.moduleKey() === 'proofs'
-            ? result.content.filter(row => row['status'] === 'EN_TRANSIT')
-            : this.moduleKey() === 'incidents'
-              ? result.content.filter(row => ['ASSIGNEE', 'PRISE_EN_CHARGE', 'EN_TRANSIT'].includes(String(row['status'])))
-              : result.content;
+      next: (result) => {
+        const eligible =
+          this.moduleKey() === 'parcels'
+            ? result.content.filter((row) => row['status'] === 'CREEE')
+            : this.moduleKey() === 'proofs'
+              ? result.content.filter((row) => row['status'] === 'EN_TRANSIT')
+              : this.moduleKey() === 'incidents'
+                ? result.content.filter((row) =>
+                    ['ASSIGNEE', 'PRISE_EN_CHARGE', 'EN_TRANSIT'].includes(String(row['status'])),
+                  )
+                : result.content;
         this.relatedRecords.set(eligible);
       },
-      error: () => this.relatedRecords.set([])
+      error: () => this.relatedRecords.set([]),
     });
   }
 
@@ -130,19 +133,21 @@ export class WorkspacePage implements OnInit, OnDestroy {
     const definition = this.module();
     if (!definition) return;
     this.loading.set(true);
-    this.api.list<ApiRecord>(definition.endpoint, this.query(), this.status(), this.page()).subscribe({
-      next: result => {
-        this.records.set(result.content);
-        this.page.set(result.number);
-        this.totalPages.set(result.totalPages);
-        this.totalElements.set(result.totalElements);
-        this.loading.set(false);
-      },
-      error: error => {
-        this.showError(error);
-        this.loading.set(false);
-      }
-    });
+    this.api
+      .list<ApiRecord>(definition.endpoint, this.query(), this.status(), this.page())
+      .subscribe({
+        next: (result) => {
+          this.records.set(result.content);
+          this.page.set(result.number);
+          this.totalPages.set(result.totalPages);
+          this.totalElements.set(result.totalElements);
+          this.loading.set(false);
+        },
+        error: (error) => {
+          this.showError(error);
+          this.loading.set(false);
+        },
+      });
   }
 
   private loadRecord(id: number, asForm: boolean): void {
@@ -150,21 +155,21 @@ export class WorkspacePage implements OnInit, OnDestroy {
     if (!definition) return;
     this.loading.set(true);
     this.api.get<ApiRecord>(definition.endpoint, id).subscribe({
-      next: result => {
+      next: (result) => {
         this.record.set(result);
         if (asForm) {
           for (const field of definition.fields) {
             const value = result[field.key];
-            this.form[field.key] = field.type === 'datetime-local' && value
-              ? String(value).slice(0, 16) : value ?? '';
+            this.form[field.key] =
+              field.type === 'datetime-local' && value ? String(value).slice(0, 16) : (value ?? '');
           }
         }
         this.loading.set(false);
       },
-      error: error => {
+      error: (error) => {
         this.showError(error);
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -205,17 +210,21 @@ export class WorkspacePage implements OnInit, OnDestroy {
       ? this.api.update<ApiRecord>(definition.endpoint, id, payload)
       : this.api.create<ApiRecord>(definition.endpoint, payload);
     request.subscribe({
-      next: result => {
+      next: (result) => {
         this.saving.set(false);
-        void Swal.fire({ icon: 'success', title: this.isEditing() ? 'Modifications enregistrées' : 'Création effectuée',
+        void Swal.fire({
+          icon: 'success',
+          title: this.isEditing() ? 'Modifications enregistrées' : 'Création effectuée',
           text: `${definition.singular} ${this.isEditing() ? 'mis à jour' : 'ajouté'} avec succès.`,
-          timer: 1700, showConfirmButton: false });
+          timer: 1700,
+          showConfirmButton: false,
+        });
         void this.router.navigate([`/${this.moduleKey()}`, result['id']]);
       },
-      error: error => {
+      error: (error) => {
         this.saving.set(false);
         this.showError(error);
-      }
+      },
     });
   }
 
@@ -230,15 +239,20 @@ export class WorkspacePage implements OnInit, OnDestroy {
       showCancelButton: true,
       confirmButtonText: 'Supprimer',
       cancelButtonText: 'Annuler',
-      confirmButtonColor: '#dc4d57'
+      confirmButtonColor: '#dc4d57',
     });
     if (!confirmation.isConfirmed) return;
     this.api.remove(definition.endpoint, id).subscribe({
       next: () => {
-        void Swal.fire({ icon: 'success', title: 'Supprimé', timer: 1300, showConfirmButton: false });
+        void Swal.fire({
+          icon: 'success',
+          title: 'Supprimé',
+          timer: 1300,
+          showConfirmButton: false,
+        });
         this.loadList();
       },
-      error: error => this.showError(error)
+      error: (error) => this.showError(error),
     });
   }
 
@@ -253,9 +267,12 @@ export class WorkspacePage implements OnInit, OnDestroy {
       now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
       const form = await Swal.fire({
         title: 'Confirmer la livraison',
-        html: '<input id="recipient" class="swal2-input" placeholder="Nom du réceptionnaire">' +
+        html:
+          '<input id="recipient" class="swal2-input" placeholder="Nom du réceptionnaire">' +
           '<input id="confirmationCode" class="swal2-input" placeholder="Code de confirmation">' +
-          '<input id="deliveredAt" class="swal2-input" type="datetime-local" value="' + now.toISOString().slice(0, 16) + '">' +
+          '<input id="deliveredAt" class="swal2-input" type="datetime-local" value="' +
+          now.toISOString().slice(0, 16) +
+          '">' +
           '<textarea id="comment" class="swal2-textarea" placeholder="Commentaire (facultatif)"></textarea>',
         focusConfirm: false,
         showCancelButton: true,
@@ -263,31 +280,44 @@ export class WorkspacePage implements OnInit, OnDestroy {
         cancelButtonText: 'Annuler',
         preConfirm: () => {
           const recipient = (document.getElementById('recipient') as HTMLInputElement).value.trim();
-          const confirmationCode = (document.getElementById('confirmationCode') as HTMLInputElement).value.trim();
+          const confirmationCode = (
+            document.getElementById('confirmationCode') as HTMLInputElement
+          ).value.trim();
           const at = (document.getElementById('deliveredAt') as HTMLInputElement).value;
           if (!recipient || !confirmationCode || !at) {
             Swal.showValidationMessage('Le réceptionnaire, le code et la date sont obligatoires.');
             return undefined;
           }
-          return { recipient, confirmationCode, at, comment: (document.getElementById('comment') as HTMLTextAreaElement).value };
-        }
+          return {
+            recipient,
+            confirmationCode,
+            at,
+            comment: (document.getElementById('comment') as HTMLTextAreaElement).value,
+          };
+        },
       });
       if (!form.isConfirmed || !form.value) return;
       body = form.value;
       title = 'Livraison confirmée';
     } else {
       const names: Record<string, string> = {
-        assign: 'Attribuer un livreur', pickup: 'Confirmer la prise en charge', start: 'Démarrer la livraison',
-        cancel: 'Annuler la commande', return: 'Enregistrer le retour'
+        assign: 'Attribuer un livreur',
+        pickup: 'Confirmer la prise en charge',
+        start: 'Démarrer la livraison',
+        cancel: 'Annuler la commande',
+        return: 'Enregistrer le retour',
       };
       title = names[action] ?? action;
       const confirmation = await Swal.fire({
         icon: action === 'cancel' ? 'warning' : 'question',
         title,
-        text: action === 'assign' ? 'Le livreur compatible sera choisi automatiquement selon la zone et les capacités.' : undefined,
+        text:
+          action === 'assign'
+            ? 'Le livreur compatible sera choisi automatiquement selon la zone et les capacités.'
+            : undefined,
         showCancelButton: true,
         confirmButtonText: 'Confirmer',
-        cancelButtonText: 'Annuler'
+        cancelButtonText: 'Annuler',
       });
       if (!confirmation.isConfirmed) return;
     }
@@ -296,7 +326,7 @@ export class WorkspacePage implements OnInit, OnDestroy {
         void Swal.fire({ icon: 'success', title, timer: 1500, showConfirmButton: false });
         this.loadRecord(id, false);
       },
-      error: error => this.showError(error)
+      error: (error) => this.showError(error),
     });
   }
 
@@ -308,40 +338,56 @@ export class WorkspacePage implements OnInit, OnDestroy {
       input: 'textarea',
       inputLabel: 'Description de la résolution',
       inputPlaceholder: 'Décrivez la solution apportée…',
-      inputValidator: value => value?.trim() ? undefined : 'La résolution est obligatoire.',
+      inputValidator: (value) => (value?.trim() ? undefined : 'La résolution est obligatoire.'),
       showCancelButton: true,
       confirmButtonText: 'Enregistrer',
-      cancelButtonText: 'Annuler'
+      cancelButtonText: 'Annuler',
     });
     if (!form.isConfirmed) return;
     this.api.action(`incidents/${id}/resolve`, { comment: form.value }).subscribe({
       next: () => {
-        void Swal.fire({ icon: 'success', title: 'Incident résolu', timer: 1500, showConfirmButton: false });
+        void Swal.fire({
+          icon: 'success',
+          title: 'Incident résolu',
+          timer: 1500,
+          showConfirmButton: false,
+        });
         this.loadRecord(id, false);
       },
-      error: error => this.showError(error)
+      error: (error) => this.showError(error),
     });
   }
 
   protected showTracking(): void {
     const id = Number(this.record()?.['id']);
     if (!id) return;
-    this.api.tracking(id).pipe(
-      catchError(error => {
-        this.showError(error);
-        return of([]);
-      })
-    ).subscribe(events => {
-      if (!events.length) {
-        void Swal.fire({ title: 'Historique de suivi', text: 'Aucun événement de suivi.', icon: 'info' });
-        return;
-      }
-      const lines = events.map(event => {
-        const item = event as Record<string, unknown>;
-        return `${this.formatDate(item['occurredAt'])} — ${item['action'] ?? 'Mise à jour'}${item['actor'] ? ` · ${item['actor']}` : ''}`;
+    this.api
+      .tracking(id)
+      .pipe(
+        catchError((error) => {
+          this.showError(error);
+          return of([]);
+        }),
+      )
+      .subscribe((events) => {
+        if (!events.length) {
+          void Swal.fire({
+            title: 'Historique de suivi',
+            text: 'Aucun événement de suivi.',
+            icon: 'info',
+          });
+          return;
+        }
+        const lines = events.map((event) => {
+          const item = event as Record<string, unknown>;
+          return `${this.formatDate(item['occurredAt'])} — ${item['action'] ?? 'Mise à jour'}${item['actor'] ? ` · ${item['actor']}` : ''}`;
+        });
+        void Swal.fire({
+          title: 'Historique de suivi',
+          html: `<div class="tracking-list">${lines.map((line) => `<p>${this.escapeHtml(line)}</p>`).join('')}</div>`,
+          confirmButtonText: 'Fermer',
+        });
       });
-      void Swal.fire({ title: 'Historique de suivi', html: `<div class="tracking-list">${lines.map(line => `<p>${this.escapeHtml(line)}</p>`).join('')}</div>`, confirmButtonText: 'Fermer' });
-    });
   }
 
   protected detailEntries(): { label: string; value: string }[] {
@@ -349,28 +395,30 @@ export class WorkspacePage implements OnInit, OnDestroy {
     const definition = this.module();
     if (!item || !definition) return [];
     const labels = new Map([
-      ...definition.fields.map(field => [field.key, field.label] as [string, string]),
-      ...definition.columns.map(column => [column.key, column.label] as [string, string])
+      ...definition.fields.map((field) => [field.key, field.label] as [string, string]),
+      ...definition.columns.map((column) => [column.key, column.label] as [string, string]),
     ]);
     return Object.entries(item)
       .filter(([key, value]) => key !== 'version' && value !== null && value !== undefined)
       .map(([key, value]) => ({
         label: labels.get(key) ?? this.humanize(key),
-        value: key.toLowerCase().includes('at') ? this.formatDate(value) : this.humanizeValue(key, value)
+        value: key.toLowerCase().includes('at')
+          ? this.formatDate(value)
+          : this.humanizeValue(key, value),
       }));
   }
 
   protected value(row: ApiRecord, key: string): string {
     const value = row[key];
     if (value === undefined || value === null || value === '') return '—';
-    const column = this.module()?.columns.find(item => item.key === key);
+    const column = this.module()?.columns.find((item) => item.key === key);
     if (column?.format === 'date') return this.formatDate(value);
-    if (column?.format === 'currency') return `${Number(value).toLocaleString('fr-FR')} €`;
+    if (column?.format === 'currency') return `${Number(value).toLocaleString('fr-FR')} Ar`;
     return this.humanizeValue(key, value);
   }
 
   protected relationLabel(field: FormField, id: unknown): string {
-    const item = this.relatedRecords().find(row => String(row['id']) === String(id));
+    const item = this.relatedRecords().find((row) => String(row['id']) === String(id));
     if (!item) return '';
     return field.relation === 'clients'
       ? `${item['name']} · #${item['id']}`
@@ -381,7 +429,9 @@ export class WorkspacePage implements OnInit, OnDestroy {
     return [`/${this.moduleKey()}`, row['id']];
   }
 
-  protected canCreate(): boolean { return this.auth.canOperate(); }
+  protected canCreate(): boolean {
+    return this.auth.canOperate();
+  }
   protected canModify(): boolean {
     const definition = this.module();
     return this.auth.canManage() && definition?.canEdit !== false;
@@ -401,11 +451,14 @@ export class WorkspacePage implements OnInit, OnDestroy {
     return this.moduleKey() !== 'orders' || row['status'] === 'CREEE';
   }
   protected hasStatusColumn(): boolean {
-    return this.module()?.columns.some(column => column.key === 'status') ?? false;
+    return this.module()?.columns.some((column) => column.key === 'status') ?? false;
   }
 
   protected humanize(value: unknown): string {
-    return String(value ?? '—').replaceAll('_', ' ').toLowerCase().replace(/(^| )\S/g, s => s.toUpperCase());
+    return String(value ?? '—')
+      .replaceAll('_', ' ')
+      .toLowerCase()
+      .replace(/(^| )\S/g, (s) => s.toUpperCase());
   }
   protected humanizeValue(key: string, value: unknown): string {
     if (key === 'status' || key === 'priority' || key === 'type') return this.humanize(value);
@@ -414,13 +467,17 @@ export class WorkspacePage implements OnInit, OnDestroy {
   protected formatDate(value: unknown): string {
     if (!value) return '—';
     const date = new Date(String(value));
-    return Number.isNaN(date.getTime()) ? String(value) : new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
+    return Number.isNaN(date.getTime())
+      ? String(value)
+      : new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
   }
   protected badgeClass(value: unknown): string {
     const status = String(value ?? '');
     if (['LIVREE', 'DISPONIBLE'].includes(status)) return 'badge success';
-    if (['ECHEC_LIVRAISON', 'ANNULEE', 'INDISPONIBLE', 'RETOURNEE'].includes(status)) return 'badge danger';
-    if (['EN_TRANSIT', 'PRISE_EN_CHARGE', 'ASSIGNEE', 'EN_LIVRAISON'].includes(status)) return 'badge info';
+    if (['ECHEC_LIVRAISON', 'ANNULEE', 'INDISPONIBLE', 'RETOURNEE'].includes(status))
+      return 'badge danger';
+    if (['EN_TRANSIT', 'PRISE_EN_CHARGE', 'ASSIGNEE', 'EN_LIVRAISON'].includes(status))
+      return 'badge info';
     return 'badge neutral';
   }
   protected isStatus(key: string): boolean {
@@ -434,39 +491,62 @@ export class WorkspacePage implements OnInit, OnDestroy {
       { action: 'start', label: 'Démarrer' },
       { action: 'deliver', label: 'Confirmer la livraison' },
       { action: 'return', label: 'Enregistrer le retour' },
-      { action: 'cancel', label: 'Annuler' }
+      { action: 'cancel', label: 'Annuler' },
     ];
     const allowed: Record<string, string[]> = {
       CREEE: ['assign', 'cancel'],
       ASSIGNEE: ['pickup', 'cancel'],
       PRISE_EN_CHARGE: ['start'],
       EN_TRANSIT: ['deliver'],
-      ECHEC_LIVRAISON: ['return']
+      ECHEC_LIVRAISON: ['return'],
     };
-    return this.auth.canOperate() ? actions.filter(item => allowed[String(status)]?.includes(item.action)) : [];
+    return this.auth.canOperate()
+      ? actions.filter((item) => allowed[String(status)]?.includes(item.action))
+      : [];
   }
   protected get canResolve(): boolean {
-    return this.auth.canOperate() && this.moduleKey() === 'incidents' && !this.record()?.['resolution'];
+    return (
+      this.auth.canOperate() && this.moduleKey() === 'incidents' && !this.record()?.['resolution']
+    );
   }
   protected get canReportIncident(): boolean {
-    return this.auth.canOperate() && this.moduleKey() === 'orders' &&
-      ['ASSIGNEE', 'PRISE_EN_CHARGE', 'EN_TRANSIT'].includes(String(this.record()?.['status']));
+    return (
+      this.auth.canOperate() &&
+      this.moduleKey() === 'orders' &&
+      ['ASSIGNEE', 'PRISE_EN_CHARGE', 'EN_TRANSIT'].includes(String(this.record()?.['status']))
+    );
   }
 
   private escapeHtml(value: string): string {
-    return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+    return value
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
   }
 
   private showError(error: unknown): void {
     const candidate = error as {
       error?: { message?: string; detail?: string; errors?: Record<string, string> };
-      message?: string
+      message?: string;
     };
     const fieldErrors = candidate.error?.errors;
-    const message = fieldErrors && Object.keys(fieldErrors).length
-      ? Object.entries(fieldErrors).map(([field, reason]) => `${this.humanize(field)} : ${reason}`).join('\n')
-      : candidate.error?.message ?? candidate.error?.detail ?? candidate.message ?? 'Une erreur est survenue.';
+    const message =
+      fieldErrors && Object.keys(fieldErrors).length
+        ? Object.entries(fieldErrors)
+            .map(([field, reason]) => `${this.humanize(field)} : ${reason}`)
+            .join('\n')
+        : (candidate.error?.message ??
+          candidate.error?.detail ??
+          candidate.message ??
+          'Une erreur est survenue.');
     this.error.set(message);
-    void Swal.fire({ icon: 'error', title: 'Opération impossible', text: message, confirmButtonText: 'Fermer' });
+    void Swal.fire({
+      icon: 'error',
+      title: 'Opération impossible',
+      text: message,
+      confirmButtonText: 'Fermer',
+    });
   }
 }

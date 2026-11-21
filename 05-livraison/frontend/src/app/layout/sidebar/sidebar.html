@@ -1,0 +1,68 @@
+<aside class="sidebar" [class.mobile-open]="mobileOpen">
+  <a class="brand" routerLink="/dashboard">
+    <span class="brand-mark">L</span>
+    <span><strong>Livraison</strong><small>Operations platform</small></span>
+  </a>
+
+  <div class="nav-caption">ESPACE DE TRAVAIL</div>
+  <nav class="main-nav" aria-label="Navigation principale" (click)="onNavigate()">
+    <a routerLink="/dashboard" routerLinkActive="active"
+      ><span class="nav-icon"><fa-icon [icon]="icons.gauge" /></span
+      ><span class="nav-text">Vue générale</span></a
+    >
+    <a routerLink="/orders" routerLinkActive="active"
+      ><span class="nav-icon"><fa-icon [icon]="icons.orders" /></span
+      ><span class="nav-text">Commandes</span></a
+    >
+    <a routerLink="/clients" routerLinkActive="active"
+      ><span class="nav-icon"><fa-icon [icon]="icons.clients" /></span
+      ><span class="nav-text">Clients</span></a
+    >
+    <a routerLink="/deliverers" routerLinkActive="active"
+      ><span class="nav-icon"><fa-icon [icon]="icons.deliverers" /></span
+      ><span class="nav-text">Livreurs</span></a
+    >
+    <a routerLink="/parcels" routerLinkActive="active"
+      ><span class="nav-icon"><fa-icon [icon]="icons.parcels" /></span
+      ><span class="nav-text">Colis</span></a
+    >
+    <a routerLink="/incidents" routerLinkActive="active"
+      ><span class="nav-icon"><fa-icon [icon]="icons.incidents" /></span
+      ><span class="nav-text">Incidents</span></a
+    >
+    <a routerLink="/proofs" routerLinkActive="active"
+      ><span class="nav-icon"><fa-icon [icon]="icons.proofs" /></span
+      ><span class="nav-text">Preuves de livraison</span></a
+    >
+  </nav>
+
+  <div class="nav-caption reports-caption">PILOTAGE</div>
+  <nav class="main-nav">
+    <a routerLink="/statistics" routerLinkActive="active"
+      ><span class="nav-icon"><fa-icon [icon]="icons.statistics" /></span
+      ><span class="nav-text">Statistiques</span></a
+    >
+    @if (auth.isAdmin()) {
+      <a routerLink="/settings" routerLinkActive="active"
+        ><span class="nav-icon"><fa-icon [icon]="icons.settings" /></span
+        ><span class="nav-text">Paramètres</span></a
+      >
+    }
+  </nav>
+
+  <div class="sidebar-footer">
+    <span class="avatar">{{ auth.username().slice(0, 1).toUpperCase() }}</span>
+    <span class="user-label"
+      ><strong>{{ auth.username() }}</strong
+      ><small>{{ auth.roleLabel() }}</small></span
+    >
+    <button
+      class="icon-button logout-button"
+      type="button"
+      title="Se déconnecter"
+      (click)="logout()"
+    >
+      <fa-icon [icon]="icons.logout" />
+    </button>
+  </div>
+</aside>

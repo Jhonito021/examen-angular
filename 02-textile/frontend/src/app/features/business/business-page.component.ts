@@ -21,9 +21,9 @@ import { TextileOrderService } from '../../core/services/textile-order.service';
 import { OperationsService } from '../../core/services/operations.service';
 import { API_ENDPOINTS } from '../../core/config/api-endpoints';
 import { AnalyticsResponse, SettingResponse } from '../../core/models/common.models';
-import { EmptyState } from '../../shared/components/empty-state';
-import { PageHeader } from '../../shared/components/page-header';
-import { StatCard } from '../../shared/components/stat-card';
+import { EmptyState } from '../../shared/components/empty-state/empty-state';
+import { PageHeader } from '../../shared/components/page-header/page-header';
+import { StatCard } from '../../shared/components/stat-card/stat-card';
 
 type PageKey =
   | 'dashboard'

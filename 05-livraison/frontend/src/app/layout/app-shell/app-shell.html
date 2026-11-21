@@ -1,0 +1,15 @@
+<div class="app-shell">
+  @if (mobileMenuOpen()) {
+    <button
+      class="mobile-menu-backdrop"
+      type="button"
+      aria-label="Fermer le menu"
+      (click)="closeMobileMenu()"
+    ></button>
+  }
+  <app-sidebar [mobileOpen]="mobileMenuOpen()" (navigate)="closeMobileMenu()" />
+  <main class="main-area">
+    <app-topbar (menuToggle)="toggleMobileMenu()" />
+    <section class="page-content"><router-outlet /></section>
+  </main>
+</div>

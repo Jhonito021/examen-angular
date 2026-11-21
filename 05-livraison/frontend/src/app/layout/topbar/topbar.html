@@ -1,0 +1,21 @@
+<header class="topbar">
+  <div class="topbar-title">
+    <button class="topbar-menu" type="button" title="Ouvrir le menu" (click)="toggleMenu()">
+      <fa-icon [icon]="icons.bars" />
+    </button>
+    <div>
+      <span class="eyebrow">GESTION DES LIVRAISONS</span><strong>Centre de pilotage</strong>
+    </div>
+  </div>
+  <div class="topbar-tools">
+    <label class="topbar-search"
+      ><fa-icon [icon]="icons.search" /><input
+        aria-label="Recherche rapide"
+        placeholder="Rechercher…"
+    /></label>
+    <button class="topbar-icon" type="button" title="Notifications">
+      <fa-icon [icon]="icons.bell" /><span></span>
+    </button>
+    <span class="topbar-user">{{ auth.username() }}</span>
+  </div>
+</header>
