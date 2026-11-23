@@ -11,7 +11,7 @@ import { AuthService } from './auth';
       <section class="login-card">
         <a class="brand login-brand" href="/login">
           <span class="brand-mark">L</span>
-          <span><strong>Livraison</strong><small>Réseau logistique</small></span>
+          <span><strong>Livraison</strong><small>Flotte &amp; acheminement</small></span>
         </a>
         <div class="login-heading">
           <span class="eyebrow">ESPACE SÉCURISÉ</span>
