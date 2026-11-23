@@ -75,7 +75,7 @@ const asRows = <T>(value: T[]): Row[] => value as unknown as Row[];
           >
         </app-page-header>
         @if (dashboardMetrics().length) {
-          <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          <div class="dashboard-metrics mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             @for (metric of dashboardMetrics(); track metric[0]) {
               <app-stat-card
                 [label]="metric[0]"
@@ -147,7 +147,7 @@ const asRows = <T>(value: T[]): Row[] => value as unknown as Row[];
             <i class="fa-solid fa-arrows-rotate"></i>Actualiser
           </button>
         </form>
-        <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <div class="statistics-metrics mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           @for (metric of dashboardMetrics(); track metric[0]) {
             <app-stat-card
               [label]="metric[0]"

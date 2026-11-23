@@ -9,9 +9,9 @@ import { AuthService } from '../../core/services/auth.service';
   standalone: true,
   imports: [ReactiveFormsModule],
   template: `
-    <main class="grid min-h-screen bg-slate-100 lg:grid-cols-[1.08fr_0.92fr]">
+    <main class="textile-login grid min-h-screen bg-slate-100 lg:grid-cols-[1.08fr_0.92fr]">
       <section
-        class="relative hidden overflow-hidden bg-gradient-to-br from-blue-950 via-blue-800 to-cyan-600 p-12 text-white lg:flex lg:flex-col lg:justify-between"
+        class="textile-login-story relative hidden overflow-hidden bg-gradient-to-br from-blue-950 via-blue-800 to-cyan-600 p-12 text-white lg:flex lg:flex-col lg:justify-between"
       >
         <div
           class="absolute -left-24 -top-24 size-80 rounded-full border-[48px] border-white/5"
@@ -56,7 +56,7 @@ import { AuthService } from '../../core/services/auth.service';
         <p class="relative text-xs text-blue-200">Tableau de bord sécurisé · Atelier Textile</p>
       </section>
 
-      <section class="grid place-items-center px-5 py-10 sm:px-10">
+      <section class="textile-login-panel grid place-items-center px-5 py-10 sm:px-10">
         <div class="w-full max-w-md">
           <div class="mb-8 lg:hidden">
             <span
