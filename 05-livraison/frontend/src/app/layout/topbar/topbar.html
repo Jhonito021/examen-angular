@@ -1,10 +1,16 @@
 <header class="topbar">
   <div class="topbar-title">
-    <button class="topbar-menu" type="button" title="Ouvrir le menu" (click)="toggleMenu()">
+    <button
+      class="topbar-menu"
+      type="button"
+      title="Ouvrir le menu"
+      aria-label="Ouvrir le menu"
+      (click)="toggleMenu()"
+    >
       <fa-icon [icon]="icons.bars" />
     </button>
     <div>
-      <span class="eyebrow">GESTION DES LIVRAISONS</span><strong>Centre de pilotage</strong>
+      <span class="eyebrow">RÉSEAU LOGISTIQUE</span><strong>Centre de dispatch</strong>
     </div>
   </div>
   <div class="topbar-tools">
