@@ -1,1 +1,17 @@
-target/
+# Maven build output
+/target/
+
+# Local H2 databases (keep demo-data.sql under version control)
+/data/*.mv.db
+/data/*.trace.db
+/data/*.lock.db
+
+# Local logs
+*.log
+
+# IDE metadata
+/.idea/
+*.iml
+/.classpath
+/.project
+/.settings/
